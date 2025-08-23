@@ -1,6 +1,9 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import core from "cors"; 
+
+//local import
+import aiRoutes from "./routes/aiRoutes.js";
 
 dotenv.config();
 
@@ -10,10 +13,8 @@ const PORT = process.env.PORT || 5000;
 app.use(core());
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to the backend server!");
-});
+app.use("/api/ai", aiRoutes);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
