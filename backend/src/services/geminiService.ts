@@ -93,6 +93,7 @@ AI:
       };
     }
 
+    console.log(parsed, "parsed");
     return parsed;
   } catch (error) {
     console.error("Gemini API Error:", error);
