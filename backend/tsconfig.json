@@ -5,20 +5,17 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
-    "target": "esnext",
-    "types": ["node"],
+    "target": "es2020",
+    "types": ["node", "express"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
     // and npm install -D @types/node
+
+    "forceConsistentCasingInFileNames": true,
 
     // Other Outputs
     "sourceMap": true,
@@ -28,6 +25,12 @@
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+
 
     // Style Options
     // "noImplicitReturns": true,
@@ -45,5 +48,8 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

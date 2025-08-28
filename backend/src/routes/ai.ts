@@ -4,7 +4,7 @@ import { conversationStore } from "../conversationStore";
 
 const router = Router();
 
-router.post("/api/ai", async (req, res) => {
+router.post("/api/ai", async (req: any, res: any) => {
   try {
     const { message, sessionId = "default" } = req.body; // frontend must send sessionId
 

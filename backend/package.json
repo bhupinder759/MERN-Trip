@@ -4,11 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-  "dev": "node --loader ts-node/esm src/index.ts",
-  "start": "node dist/index.js",
-  "build": "rimraf dist && tsc -p tsconfig.json",
-  "typecheck": "tsc --noEmit"
-},
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "start": "node dist/index.js",
+    "build": "rimraf dist && tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

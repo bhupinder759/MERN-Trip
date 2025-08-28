@@ -4,8 +4,10 @@ import core from "cors";
 
 //local import
 import aiRoutes from "./routes/aiRoutes.js";
+import { connectDB } from "./config/db.js";
 
 dotenv.config();
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
