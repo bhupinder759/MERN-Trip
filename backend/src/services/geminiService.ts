@@ -66,14 +66,14 @@ export async function askGemini(userMessage: string, history: string[] = []) {
   try {
     // Create context by combining system prompt + history + latest user message
     const prompt = `
-${SYSTEM_PROMPT}
-
-Conversation so far:
-${history.join("\n")}
-
-User: ${userMessage}
-AI:
-`;
+    ${SYSTEM_PROMPT}
+    
+    Conversation so far:
+    ${history.join("\n")}
+    
+    User: ${userMessage}
+    AI:
+    `;
 
     const result = await model.generateContent(prompt);
 
@@ -84,9 +84,16 @@ AI:
     // Try to parse JSON safely
     let parsed;
     try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      // If Gemini sends invalid JSON, fallback with safe structure
+      // Clean Gemini output → remove markdown/code fences
+      const cleanText = text
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+    
+      parsed = JSON.parse(cleanText);
+    } catch (err: any) {
+      console.error("JSON parse error:", err.message, "Raw:", text);
+      // If Gemini sends invalid JSON, fallback
       parsed = {
         resp: "Sorry, I had trouble understanding. Could you please repeat?",
         ui: "source",
@@ -95,6 +102,7 @@ AI:
 
     console.log(parsed, "parsed");
     return parsed;
+
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {

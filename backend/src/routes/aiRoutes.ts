@@ -5,43 +5,30 @@ import { Router } from "express";
 
 const router = Router();
 
-// POST /api/ai/ask
-// router.post("/ask", async (req: any, res: any) => {
-//   const { message, history } = req.body;
-
-//   if (!message) {
-//     return res.status(400).json({ error: "Message is required" });
-//   }
-
-//   const response = await askGemini(message, history || []);
-//   res.json(response);
-// });
-
-router.post("/trip", async (req : any, res: any) => {
+router.post("/trip", async (req: any, res: any) => {
   try {
     const { sessionId, userMessage } = req.body;
 
-    if (!sessionId) {
-      return res.status(400).json({ error: "sessionId required" });
+    if (!sessionId || !userMessage) {
+      return res.status(400).json({ error: "sessionId and userMessage required" });
     }
 
     // fetch conversation state from DB
     let conv = await conversationService.get(sessionId);
 
-    // AI logic here (use conv.step + conv.data)
-    // Example mock response:
-    let response = {
-      resp: "Great! First, where are you starting your trip from?",
-      ui: "source",
-    };
+    // build history (optional, can store in conv.data if needed)
+    const history = conv.data.history || [];
 
-    // update DB with new step
+    // call Gemini
+    const aiResponse = await askGemini(userMessage, history);
+
+    // update DB with new step + history
     await conversationService.update(sessionId, {
-      step: "destination", // example next step
-      data: { ...conv.data, source: userMessage || "" },
+      step: aiResponse.ui,
+      data: { ...conv.data, history: [...history, `User: ${userMessage}`, `AI: ${aiResponse.resp}`] },
     });
 
-    res.json(response);
+    res.json(aiResponse);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });

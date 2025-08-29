@@ -1,4 +1,4 @@
-import { Conversation, IConversation } from "../models/Conversation";
+import { Conversation, IConversation } from "../models/Conversation.js";
 
 class ConversationService {
   async get(sessionId: string): Promise<IConversation> {
