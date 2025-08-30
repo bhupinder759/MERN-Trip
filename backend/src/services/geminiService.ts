@@ -79,7 +79,6 @@ export async function askGemini(userMessage: string, history: string[] = []) {
 
     // Get raw response text
     const text = result.response.text();
-    console.log(text, "text")
 
     // Try to parse JSON safely
     let parsed;
@@ -100,7 +99,6 @@ export async function askGemini(userMessage: string, history: string[] = []) {
       };
     }
 
-    console.log(parsed, "parsed");
     return parsed;
 
   } catch (error) {
