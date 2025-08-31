@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Plane, Wallet, Mountain, Bot, User, MapPin, Users, CalendarDays, Utensils, Star } from 'lucide-react';
+import { Send, Sparkles, Plane, Wallet, Mountain, MapPin, Users, CalendarDays, Utensils, Star } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
 import { v4 as uuid } from 'uuid';
@@ -30,7 +30,16 @@ type TripPlan = {
 type Message = {
     sender: "user" | "ai";
     text: string;
+    plan?: TripPlan;
+    ui?: string;
     loading?: boolean; // Add loading state to each message
+};
+
+type ChatMessage = {
+  sender: "user" | "ai";
+  text: string;
+  ui?: "source" | "destination" | "groupSize" | "budget" | "tripDuration" | "travelInterests" | "preferences" | "Final";
+  plan?: any; // You can make this more strict later if you want
 };
 
 type Suggestion = {
@@ -101,7 +110,7 @@ const TripPlanCard = ({ plan }: { plan: TripPlan }) => (
 
 
 export default function AiTripChatPage() {
-  const [messages, setMessages] = useState<{ sender: "user" | "ai"; text: string }[]>([]);;
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -143,11 +152,15 @@ export default function AiTripChatPage() {
       });
 
          // Replace last AI message with real reply
-         setMessages((prev) => {
-           const updated = [...prev];
-           updated[updated.length - 1] = { sender: 'ai', text: res.data.resp };
-           return updated;
-         });
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { sender: 'ai', 
+         text: res.data.resp, 
+         ui: res.data.ui,
+         plan: res.data.plan 
+        };
+        return updated;
+      });
        } catch (err) {
          console.error(err);
        } finally {
@@ -186,9 +199,31 @@ export default function AiTripChatPage() {
               {messages.map((msg, index) => (
                 <div key={index} className="flex items-start gap-4">
                   <div className="flex-1">
-                    {msg.sender === 'user' && (<div className='flex justify-end mb-2'>
+                    {msg.sender === 'user' && (
+                    <div className='flex justify-end mb-2'>
                       <p className='font-semibold bg-[#0f0f0f] rounded-xl p-3 w-auto text-gray-300 text-right'>{msg.text}</p>
-                    </div>)}
+                    </div>)
+                    }
+
+                    {/* {msg.loading && (
+                      <div role="status" className="flex justify-start">
+                        <svg
+                          aria-hidden="true"
+                          className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-orange-600"
+                          viewBox="0 0 100 101"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873Z"
+                            fill="currentFill"
+                          />
+                        </svg>
+                      </div>
+                    )} */}
 
                     {loading && msg.sender === 'ai' &&  (
                       <div role="status">
@@ -200,8 +235,14 @@ export default function AiTripChatPage() {
                       </div>
                     )}
 
-                    {msg.sender === 'ai' && (
-                      <p className='bg-transparent text-white text-left p-2 mt-4'>{msg.text}</p>
+                    {!loading && msg.sender === 'ai' && (
+                      <>
+                        {msg.ui === 'Final' && msg.plan ? (
+                          <TripPlanCard plan={msg.plan} />
+                        ) : (
+                          <p className="bg-transparent text-white text-left p-2 mt-4">{msg.text}</p>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
